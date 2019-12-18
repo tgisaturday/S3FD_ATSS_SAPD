@@ -52,7 +52,7 @@ def intersect(box_a, box_b):
     inter = torch.clamp((max_xy - min_xy), min=0)
     return inter[:, :, 0] * inter[:, :, 1]
 
-def soft_anchor(box_a, box_b):
+def soft_anchor(box_a, box_b, conf):
     """Compute the soft anchor weight of two sets of boxes. Here we operate on
     ground truth boxes and default boxes.
     Args:
@@ -63,14 +63,14 @@ def soft_anchor(box_a, box_b):
     """
     A = box_a.size(0)
     B = box_b.size(0)
-    a_xmin = box_a[:, 0].unsqueeze(1).expand(A, B)
-    a_ymin = box_a[:, 1].unsqueeze(1).expand(A, B)
-    a_xmax = box_a[:, 2].unsqueeze(1).expand(A, B)
-    a_ymax = box_a[:, 3].unsqueeze(1).expand(A, B)
-    b_xmin = box_a[:, 0].unsqueeze(0).expand(A, B)
-    b_ymin = box_a[:, 1].unsqueeze(0).expand(A, B)
-    b_xmax = box_a[:, 2].unsqueeze(0).expand(A, B)
-    b_ymax = box_a[:, 3].unsqueeze(0).expand(A, B)
+    a_xmin = box_a[:, 0]
+    a_ymin = box_a[:, 1]
+    a_xmax = box_a[:, 2]
+    a_ymax = box_a[:, 3]
+    b_xmin = box_b[:, 0]
+    b_ymin = box_b[:, 1]
+    b_xmax = box_b[:, 2]
+    b_ymax = box_b[:, 3]
     d_l = torch.abs(a_xmin - b_xmin)
     d_r = torch.abs(a_xmax - b_xmax)
     d_b = torch.abs(a_ymin - b_ymin)
@@ -78,27 +78,11 @@ def soft_anchor(box_a, box_b):
     
     anchor_weight = (torch.min(d_l, d_r)*torch.min(d_b,d_t))/(torch.max(d_l, d_r)*torch.max(d_b,d_t) +1e-8)
     e =1 #controls the decreasing steepness
-    anchor_weight = torch.pow(anchor_weight, e)
-    anchor_weight = anchor_weight.unsqueeze(2).expand(A, B, 4)
+    anchor_weight = torch.pow(anchor_weight, e).unsqueeze(-1).expand_as(box_a)
+    anchor_weight = torch.abs(1 - torch.abs(anchor_weight - 2))
+    
+    return anchor_weight
 
-    anchor_weight = anchor_weight.mean(0)
-    
-    tmp_loc_p=box_b.clone()
-    p_x_min = tmp_loc_p[:,0]
-    p_y_min = tmp_loc_p[:,1]
-    p_x_max = tmp_loc_p[:,2]
-    p_y_max = tmp_loc_p[:,3]
-    p_x_center = (p_x_max + p_x_min)/2
-    p_y_center = (p_y_max + p_y_min)/2
-    p_width = (p_x_max - p_x_min)/2
-    p_height = (p_y_max - p_y_min)/2
-    tmp_loc_p[:,0] = p_x_center - anchor_weight[:,0]*p_width
-    tmp_loc_p[:,1] = p_y_center - anchor_weight[:,1]*p_height
-    tmp_loc_p[:,2] = p_x_center + anchor_weight[:,2]*p_width
-    tmp_loc_p[:,3] = p_y_center + anchor_weight[:,3]*p_width
-    
-    #return anchor_weight
-    return tmp_loc_p # [A,B]
 
 
 def center_distance(box_a, box_b):
@@ -169,6 +153,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
         truths,
         point_form(priors)
     )
+
     # (Bipartite Matching)
     # [1,num_objects] best prior for each ground truth
     best_prior_overlap, best_prior_idx = overlaps.max(1, keepdim=True)
@@ -223,7 +208,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
         conf[stage2_idx[:N]] += 1
         
     
-    loc = encode(matches, priors, variances)
+    loc = encode(matches, priors, variances, conf.unsqueeze(-1).expand_as(matches))
     loc_t[idx] = loc    # [num_priors,4] encoded offsets to learn
     conf_t[idx] = conf  # [num_priors] top class label for each prior
 
@@ -274,7 +259,7 @@ def match_ssd(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
     conf_t[idx] = conf  # [num_priors] top class label for each prior
 
 
-def encode(matched, priors, variances):
+def encode(matched, priors, variances,confs):
     """Encode the variances from the priorbox layers into the ground truth boxes
     we have matched (based on jaccard overlap) with the prior boxes.
     Args:
@@ -286,15 +271,23 @@ def encode(matched, priors, variances):
     Return:
         encoded boxes (tensor), Shape: [num_priors, 4]
     """
+    a_box = matched
+    b_box = point_form(priors)
+    anchor_weight = soft_anchor(a_box,b_box,confs)
 
     # dist b/t match center and prior's center
     g_cxcy = (matched[:, :2] + matched[:, 2:]) / 2 - priors[:, :2]
     # encode variance
     g_cxcy /= (variances[0] * priors[:, 2:])
-    # match wh / prior wh
-    g_wh = (matched[:, 2:] - matched[:, :2]) / priors[:, 2:]
+    
+    # match wh / prior wh (width)
+    g_wh = (matched[:, 2:] - matched[:, :2]) / priors[:, 2:]   
     #g_wh = torch.log(g_wh) / variances[1]
     g_wh = torch.log(g_wh) / variances[1]
+    
+    #apply soft anchor weight to g_cxcy and g_wh
+    g_cxcy *= anchor_weight[:, :2]
+    g_wh *= anchor_weight[:, :2]
     # return target for smooth_l1_loss
     return torch.cat([g_cxcy, g_wh], 1)  # [num_priors,4]
 

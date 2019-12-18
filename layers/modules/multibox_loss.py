@@ -11,7 +11,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 
-from ..bbox_utils import match, log_sum_exp, match_ssd, soft_anchor
+from ..bbox_utils import match, log_sum_exp, match_ssd
 
 
 class MultiBoxLoss(nn.Module):
@@ -98,30 +98,7 @@ class MultiBoxLoss(nn.Module):
         loc_p = loc_data[pos_idx].view(-1, 4)
         loc_t = loc_t[pos_idx].view(-1, 4)
         loss_l = F.smooth_l1_loss(loc_p, loc_t, size_average=False)
-        
-        """
-        anchor_weight = soft_anchor(loc_t, loc_p)
-        
-        def soft_anchor_smooth_l1_loss(input, target, anchor_weight):
-            print(anchor_weight)
-            t = anchor_weight*torch.abs(input - target)
-            s_loss = torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
-
-
-            return torch.mean(s_loss)
-        
-        loss_l = soft_anchor_smooth_l1_loss(loc_p, loc_t, anchor_weight)
-        """
-        
-        #modified soft anchor implementation starts
-        soft_loc_p = soft_anchor(loc_t, loc_p)
-        loss_l = F.smooth_l1_loss(soft_loc_p, loc_t, size_average=False)
-        #modified soft anchor implementation ends  
-        
-
-
-        
-        
+              
         # Compute max conf across batch for hard negative mining
         batch_conf = conf_data.view(-1, self.num_classes)
         loss_c = log_sum_exp(batch_conf) - \
