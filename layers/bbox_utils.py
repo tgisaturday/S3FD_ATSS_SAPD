@@ -76,12 +76,13 @@ def soft_anchor(box_a, box_b):
     d_b = torch.abs(a_ymin - b_ymin)
     d_t = torch.abs(a_ymax - b_ymax)  
     
-    anchor_weight = (torch.min(d_l, d_r)*torch.min(d_b,d_t))/(torch.max(d_l, d_r)*torch.max(d_b,d_t) +1e-8)+1e-8
-    e =0.2 #controls the decreasing steepness
+    anchor_weight = (torch.min(d_l, d_r)*torch.min(d_b,d_t))/(torch.max(d_l, d_r)*torch.max(d_b,d_t) +1e-8)
+    e =1 #controls the decreasing steepness
     anchor_weight = torch.pow(anchor_weight, e)
     anchor_weight = anchor_weight.unsqueeze(2).expand(A, B, 4)
 
     anchor_weight = anchor_weight.mean(0)
+    
     tmp_loc_p=box_b.clone()
     p_x_min = tmp_loc_p[:,0]
     p_y_min = tmp_loc_p[:,1]

@@ -99,23 +99,25 @@ class MultiBoxLoss(nn.Module):
         loc_t = loc_t[pos_idx].view(-1, 4)
         loss_l = F.smooth_l1_loss(loc_p, loc_t, size_average=False)
         
+        """
+        anchor_weight = soft_anchor(loc_t, loc_p)
         
-        #anchor_weight = soft_anchor(loc_t, loc_p)
+        def soft_anchor_smooth_l1_loss(input, target, anchor_weight):
+            print(anchor_weight)
+            t = anchor_weight*torch.abs(input - target)
+            s_loss = torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
+
+
+            return torch.mean(s_loss)
         
-        #def soft_anchor_smooth_l1_loss(input, target, anchor_weight):
-        #    t = torch.abs(input - target)
-        #    s_loss = anchor_weight*torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
-            
-        #    return torch.mean(s_loss)
+        loss_l = soft_anchor_smooth_l1_loss(loc_p, loc_t, anchor_weight)
+        """
         
-        #loss_l = soft_anchor_smooth_l1_loss(loc_p, loc_t, anchor_weight)
-        
-        
-        #soft anchor implementation starts
+        #modified soft anchor implementation starts
         soft_loc_p = soft_anchor(loc_t, loc_p)
         loss_l = F.smooth_l1_loss(soft_loc_p, loc_t, size_average=False)
-        #soft anchor implementaion ends  
-
+        #modified soft anchor implementation ends  
+        
 
 
         
