@@ -74,15 +74,17 @@ class MultiBoxLoss(nn.Module):
 
         # match priors (default boxes) and ground truth boxes
         loc_t = torch.Tensor(num, num_priors, 4)
+        anc_t = torch.Tensor(num, num_priors, 4)
         conf_t = torch.LongTensor(num, num_priors)
         for idx in range(num):
             truths = targets[idx][:, :-1].data
             labels = targets[idx][:, -1].data
             defaults = priors.data
             self.match(self.threshold, truths, defaults, self.variance, labels,
-                       loc_t, conf_t, idx)
+                       loc_t, conf_t, anc_t, idx)
         if self.use_gpu:
             loc_t = loc_t.cuda()
+            anc_t = anc_t.cuda()
             conf_t = conf_t.cuda()
         # wrap targets
         loc_t = Variable(loc_t, requires_grad=False)
@@ -97,8 +99,22 @@ class MultiBoxLoss(nn.Module):
         pos_idx = pos.unsqueeze(pos.dim()).expand_as(loc_data)
         loc_p = loc_data[pos_idx].view(-1, 4)
         loc_t = loc_t[pos_idx].view(-1, 4)
+        anc_t = anc_t[pos_idx].view(-1, 4)
+        
         loss_l = F.smooth_l1_loss(loc_p, loc_t, size_average=False)
-              
+        
+
+        
+        def soft_anchor_smooth_l1_loss(input, target, anchor_weight):
+            t = torch.abs(input - target)
+            s_loss = anchor_weight*torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
+            anchor_weight = anchor_weight.mean(-1)
+            return torch.sum(s_loss)/anchor_weight.sum()
+        
+       
+        loss_l = soft_anchor_smooth_l1_loss(loc_p, loc_t, anc_t)
+            
+            
         # Compute max conf across batch for hard negative mining
         batch_conf = conf_data.view(-1, self.num_classes)
         loss_c = log_sum_exp(batch_conf) - \

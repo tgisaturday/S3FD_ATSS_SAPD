@@ -127,7 +127,7 @@ def jaccard(box_a, box_b):
     return inter / union  # [A,B]
 
 
-def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
+def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx):
     """Match each prior box with the ground truth box of the highest jaccard
     overlap, encode the bounding boxes, then return the matched indices
     corresponding to both confidence and location preds.
@@ -208,9 +208,11 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
         conf[stage2_idx[:N]] += 1
         
     
-    loc = encode(matches, priors, variances, conf.unsqueeze(-1).expand_as(matches))
+    loc, anchor_weight = encode(matches, priors, variances, conf.unsqueeze(-1).expand_as(matches))
+
     loc_t[idx] = loc    # [num_priors,4] encoded offsets to learn
     conf_t[idx] = conf  # [num_priors] top class label for each prior
+    anc_t[idx] = anchor_weight
 
 
 
@@ -286,10 +288,8 @@ def encode(matched, priors, variances,confs):
     g_wh = torch.log(g_wh) / variances[1]
     
     #apply soft anchor weight to g_cxcy and g_wh
-    g_cxcy *= anchor_weight[:, :2]
-    g_wh *= anchor_weight[:, :2]
     # return target for smooth_l1_loss
-    return torch.cat([g_cxcy, g_wh], 1)  # [num_priors,4]
+    return torch.cat([g_cxcy, g_wh], 1) , anchor_weight # [num_priors,4]
 
 
 # Adapted from https://github.com/Hakuyume/chainer-ssd
