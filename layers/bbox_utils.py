@@ -77,7 +77,7 @@ def soft_anchor(box_a, box_b):
     d_t = torch.abs(a_ymax - b_ymax)  
     
     anchor_weight = (torch.min(d_l, d_r)*torch.min(d_b,d_t))/(torch.max(d_l, d_r)*torch.max(d_b,d_t) +1e-8)+1e-8
-    e =1 #controls the decreasing steepness
+    e =0.2 #controls the decreasing steepness
     anchor_weight = torch.pow(anchor_weight, e)
     anchor_weight = anchor_weight.unsqueeze(2).expand(A, B, 4)
 
@@ -95,8 +95,10 @@ def soft_anchor(box_a, box_b):
     tmp_loc_p[:,1] = p_y_center - anchor_weight[:,1]*p_height
     tmp_loc_p[:,2] = p_x_center + anchor_weight[:,2]*p_width
     tmp_loc_p[:,3] = p_y_center + anchor_weight[:,3]*p_width
-
+    
+    #return anchor_weight
     return tmp_loc_p # [A,B]
+
 
 def center_distance(box_a, box_b):
     """Compute the L2 distance of center of two sets of boxes. Here we operate on
