@@ -100,17 +100,18 @@ class MultiBoxLoss(nn.Module):
         loc_p = loc_data[pos_idx].view(-1, 4)
         loc_t = loc_t[pos_idx].view(-1, 4)
         anc_t = anc_t[pos_idx].view(-1, 4)
-        
+        '''
         loss_l = F.smooth_l1_loss(loc_p, loc_t, size_average=False)
-        
-
+        # Sum of losses: L(x,c,l,g) = (Lconf(x, c) + αLloc(x,l,g)) / N
+        N = num_pos.data.sum() if num_pos.data.sum() > 0 else num
+        loss_l /= N      
+        '''
         
         def soft_anchor_smooth_l1_loss(input, target, anchor_weight):
             t = torch.abs(input - target)
             s_loss = anchor_weight*torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
-            #anchor_weight = anchor_weight.mean(-1)
-            #return torch.sum(s_loss)/anchor_weight.sum() * 1000
-            return torch.sum(s_loss)      
+            anchor_weight = anchor_weight.mean(-1)
+            return torch.sum(s_loss)/anchor_weight.sum()     
        
         loss_l = soft_anchor_smooth_l1_loss(loc_p, loc_t, anc_t)
             
@@ -137,9 +138,8 @@ class MultiBoxLoss(nn.Module):
                            ].view(-1, self.num_classes)
         targets_weighted = conf_t[(pos + neg).gt(0)]
         loss_c = F.cross_entropy(conf_p, targets_weighted, size_average=False)
-
         # Sum of losses: L(x,c,l,g) = (Lconf(x, c) + αLloc(x,l,g)) / N
         N = num_pos.data.sum() if num_pos.data.sum() > 0 else num
-        loss_l /= N
         loss_c /= N
+        
         return loss_l, loss_c
