@@ -108,9 +108,9 @@ class MultiBoxLoss(nn.Module):
         def soft_anchor_smooth_l1_loss(input, target, anchor_weight):
             t = torch.abs(input - target)
             s_loss = anchor_weight*torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
-            anchor_weight = anchor_weight.mean(-1)
-            return torch.sum(s_loss)/anchor_weight.sum()
-        
+            #anchor_weight = anchor_weight.mean(-1)
+            #return torch.sum(s_loss)/anchor_weight.sum()
+            return torch.sum(s_loss)      
        
         loss_l = soft_anchor_smooth_l1_loss(loc_p, loc_t, anc_t)
             
