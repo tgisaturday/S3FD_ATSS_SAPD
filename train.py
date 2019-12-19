@@ -143,11 +143,13 @@ def train():
         for batch_idx, (images, targets) in enumerate(train_loader):
             if args.cuda:
                 images = Variable(images.cuda())
-                targets = [Variable(ann.cuda(), volatile=True)
-                           for ann in targets]
+                with torch.no_grad():
+                    targets = [Variable(ann.cuda())
+                               for ann in targets]
             else:
                 images = Variable(images)
-                targets = [Variable(ann, volatile=True) for ann in targets]
+                with torch.no_grad():
+                    targets = [Variable(ann) for ann in targets]
 
             if iteration in cfg.LR_STEPS:
                 step_index += 1
@@ -194,11 +196,13 @@ def val(epoch):
     for batch_idx, (images, targets) in enumerate(val_loader):
         if args.cuda:
             images = Variable(images.cuda())
-            targets = [Variable(ann.cuda(), volatile=True)
-                       for ann in targets]
+            with torch.no_grad():
+                targets = [Variable(ann.cuda())
+                           for ann in targets]
         else:
             images = Variable(images)
-            targets = [Variable(ann, volatile=True) for ann in targets]
+            with torch.no_grad():
+                targets = [Variable(ann) for ann in targets]
 
         out = net(images)
         loss_l, loss_c = criterion(out, targets)
