@@ -100,13 +100,13 @@ class MultiBoxLoss(nn.Module):
         loc_p = loc_data[pos_idx].view(-1, 4)
         loc_t = loc_t[pos_idx].view(-1, 4)
         anc_t = anc_t[pos_idx].view(-1, 4)
-        '''
+        
         loss_l = F.smooth_l1_loss(loc_p, loc_t, size_average=False)
         # Sum of losses: L(x,c,l,g) = (Lconf(x, c) + αLloc(x,l,g)) / N
         N = num_pos.data.sum() if num_pos.data.sum() > 0 else num
         loss_l /= N      
-        '''
-        
+
+        #SAPD implementation starts
         def soft_anchor_smooth_l1_loss(input, target, anchor_weight):
             t = torch.abs(input - target)
             s_loss = anchor_weight*torch.where(t < 1, 0.5 * t ** 2, t - 0.5)
@@ -114,7 +114,7 @@ class MultiBoxLoss(nn.Module):
             return torch.sum(s_loss)/anchor_weight.sum()     
        
         loss_l = soft_anchor_smooth_l1_loss(loc_p, loc_t, anc_t)
-            
+        #SAPD implementation ends            
             
         # Compute max conf across batch for hard negative mining
         batch_conf = conf_data.view(-1, self.num_classes)

@@ -1,14 +1,16 @@
-## S³FD: Single Shot Scale-invariant Face Detector ##
-A PyTorch Implementation of Single Shot Scale-invariant Face Detector
+## S³FD_ATSS_SAPD: Single Shot Scale-invariant Face Detector ##
+Application of Adaptive Training Sample Selection and Soft Anchor Point Detection to S3FD
+based on the PyTorch Implementation of Single Shot Scale-invariant Face Detector
 
 ### Description
 Meanwhile train hand and head with S3FD,hand dataset is [Egohands Dataset](http://vision.soic.indiana.edu/projects/egohands/),head dataset is [SCUT-HEAD](https://github.com/HCIILAB/SCUT-HEAD-Dataset-Release),we can download [hand model](https://pan.baidu.com/s/1_d4HqioBJknGj2ypwtYaXg) and [face model](https://pan.baidu.com/s/1epyTAUc6qSt3oZ7veK4oEw)
 
 ### Requirement
-* pytorch 0.3 
+* pytorch 1.0.X 
 * opencv 
 * numpy 
 * easydict
+* torchvision
 
 ### Prepare data 
 1. download WIDER face dataset、Egohands dataset and SCUT-HEAD
@@ -18,57 +20,50 @@ Meanwhile train hand and head with S3FD,hand dataset is [Egohands Dataset](http:
 
 
 ### Train
-We can choose different dataset to train different target[face,head,hand] 
+I chose face dataset for training and evaluation of ATSS and SAPD applications.
 ``` 
-python train.py --batch_size 4 --dataset face\hand\head
+python train.py --batch_size 4 --dataset face
 ``` 
 
 ### Evalution
-according to yourself dataset path,modify data/config.py 
-1. Evaluate on AFW.
-```
-python afw_test.py
-```
-2. Evaluate on FDDB 
-```
-python fddb_test.py
-```
-3. Evaluate on PASCAL  face 
-``` 
-python pascal_test.py
-```
-4. test on WIDER FACE 
+According to your dataset path, modify data/config.py 
+
+1. test on WIDER FACE 
 ```
 python wider_test.py
 ```
-### Demo 
-you can test yourself image
-```
-python demo.py
-```
+
+### Implementation Details
+1. Adaptive Training Sample Selection(ATSS)
+
+I applied ATSS after the original sample selection part of S3FD in bbox_utils.py (line 193-223)
+
+Unlike the original ATSS algorithm starting from empty candidate set, I used result positive set 
+from stage 2 of S3FD as starting candidate set. Other details follow the original ATSS algorithm.
+
+2. Soft Anchor Point Detection(SAPD)
+
+I applied SAPD to the smoothed_L1_loss of S3FD in multibox_loss.py (line 109-107)
+anchor_weight calculation for generalized centerness function is done in bbox_utils.py (line 293)
+I first multiply anchor_weight to the result of smoothed_L1_loss and
+devide the total sum of loss with the sum of anchor_weight in multibox_loss.py (line 112-114)
+I tried to preserve the main concept of original SAPD while modifying the generalized centerness function to make it fit to the regression loss of S3FD.
+
 
 ### Result
-1. AFW PASCAL FDDB
-<div align="center">
-<img src="https://github.com/yxlijun/S3FD.pytorch/blob/master/img/AFW.png" height="200px" alt="afw" >
-<img src="https://github.com/yxlijun/S3FD.pytorch/blob/master/img/pascal.png" height="200px" alt="pascal" >
-<img src="https://github.com/yxlijun/S3FD.pytorch/blob/master/img/FDDB.png" height="200px" alt="fddb" >     
-</div>
+1. test on WIDER FACE 
 
-	AFW AP=99.81 paper=99.85 
-	PASCAL AP=98.77 paper=98.49
-	FDDB AP=0.975 paper=0.983
 	WIDER FACE:
-	Easy AP=0.925 paper = 0.927
-	Medium AP=0.925 paper = 0.924
-	Hard AP=0.854 paper = 0.852
+	Easy AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
+	Medium AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
+	Hard AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
 
-2. demo
-<div align="center">
-<img src="https://github.com/yxlijun/S3FD.pytorch/blob/master/tmp/test2.jpg" height="400px" alt="afw" >
-</div>
+
 
 
 ### References
 * [S³FD: Single Shot Scale-invariant Face Detector](https://arxiv.org/abs/1708.05237)
+* [Bridging the Gap Between Anchor-based and Anchor-free Detection via Adaptive Training Sample Selection](https://arxiv.org/abs/1912.02424)
+* [Soft Anchor-Point Object Detection](https://arxiv.org/abs/1911.12448)
 * [ssd.pytorch](https://github.com/amdegroot/ssd.pytorch)
+* [S3FD.pytorch](https://github.com/yxlijun/S3FD.pytorch)

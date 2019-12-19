@@ -189,9 +189,9 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
         N = torch.sum(stage2_overlap[:N]) if torch.sum(
             stage2_overlap[:N]) < N else N
         conf[stage2_idx[:N]] += 1
-        
+
     #ATSS implementation starts
-    k = 3
+    k = 9
     #build an empty set for candidate positive samples 
     candidate_idx = stage2_idx[:N] #use the set from stage 2 instead.     
     
@@ -221,7 +221,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
     for candidate in candidate_idx:
         conf[candidate] = best_truth_overlap_clone[candidate] >= ATSS_th
     #ATSS implementation ends
-    
+
     loc, anchor_weight = encode(matches, priors, variances, conf.unsqueeze(-1).expand_as(matches))
 
     loc_t[idx] = loc    # [num_priors,4] encoded offsets to learn
