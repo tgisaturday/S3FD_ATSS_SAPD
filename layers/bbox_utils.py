@@ -181,7 +181,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
     '''
     
     #ATSS threshold value varies between 0.2 ~ 0.8. 
-    #Since Stage Two deals with worst cases, we only replace Stage One with ATSS.
+    #Since Stage Two deals with worst cases, we only replace _th2 with ATSS_th.
     
     #ATSS implementation starts
     N=9
@@ -189,6 +189,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
     mean = top_N_dist.mean(dim=1)
     std = top_N_dist.std(dim=1)
     ATSS_th = mean+std
+    _th2 = ATSS_th.mean()
     matches = truths[best_truth_idx]          # Shape: [num_priors,4]
     conf = labels[best_truth_idx]         # Shape: [num_priors]
     conf[best_truth_overlap < _th2] = 0  # label as background
