@@ -171,29 +171,11 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
         best_truth_idx[best_prior_idx[j]] = j
     _th1, _th2, _th3 = threshold  # _th1 = 0.1 ,_th2 = 0.35,_th3 = 0.5
 
-    '''
-    #original Stage One
     N = (torch.sum(best_prior_overlap >= _th2) +
          torch.sum(best_prior_overlap >= _th3)) // 2
     matches = truths[best_truth_idx]          # Shape: [num_priors,4]
     conf = labels[best_truth_idx]         # Shape: [num_priors]
     conf[best_truth_overlap < _th2] = 0  # label as background
-    '''
-    
-    #ATSS threshold value varies between 0.2 ~ 0.8. 
-    #Since Stage Two deals with worst cases, we only replace _th2 with ATSS_th.
-    
-    #ATSS implementation starts
-    N=9
-    top_N_dist, top_N_idx = center_dist.sort(descending=True)[:N]
-    mean = top_N_dist.mean(dim=1)
-    std = top_N_dist.std(dim=1)
-    ATSS_th = mean+std
-    _th2 = ATSS_th.mean()
-    matches = truths[best_truth_idx]          # Shape: [num_priors,4]
-    conf = labels[best_truth_idx]         # Shape: [num_priors]
-    conf[best_truth_overlap < _th2] = 0  # label as background
-    #ATSS implementation ends 
        
     best_truth_overlap_clone = best_truth_overlap.clone()
     add_idx = best_truth_overlap_clone.gt(
@@ -208,6 +190,37 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
             stage2_overlap[:N]) < N else N
         conf[stage2_idx[:N]] += 1
         
+    #ATSS implementation starts
+    k = 3
+    #build an empty set for candidate positive samples 
+    candidate_idx = stage2_idx[:N] #use the set from stage 2 instead.     
+    
+    best_prior_dist, best_prior_idx = center_dist.max(1, keepdim=True)
+    # [1,num_priors] best ground truth for each prior
+    best_truth_dist, best_truth_idx = center_dist.max(0, keepdim=True)  # 0-2000
+    best_truth_idx.squeeze_(0)
+    best_truth_dist.squeeze_(0)
+    best_prior_idx.squeeze_(1)
+    best_prior_dist.squeeze_(1)
+    best_truth_dist.index_fill_(0, best_prior_idx, 2)  # ensure best prior
+    best_truth_dist_clone = best_truth_dist.clone()
+    stage3_dist, stage3_idx = best_truth_dist_clone.sort(descending=True)
+    
+    #set of new candidates
+    candidate_idx = torch.cat((candidate_idx,stage3_idx[:k]),dim=-1)
+    
+    #IoU between candidates and its ground truths
+    best_truth_overlap_clone = best_truth_overlap.clone()
+    candidate_overlap = best_truth_overlap_clone[candidate_idx]
+    
+    #calculate ATSS threshold
+    mean = torch.mean(candidate_overlap)
+    std = torch.std(candidate_overlap)
+    ATSS_th = mean+std
+    #stage 3 positive and negative sample selection
+    for candidate in candidate_idx:
+        conf[candidate] = best_truth_overlap_clone[candidate] >= ATSS_th
+    #ATSS implementation ends
     
     loc, anchor_weight = encode(matches, priors, variances, conf.unsqueeze(-1).expand_as(matches))
 
@@ -257,6 +270,7 @@ def match_ssd(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
     matches = truths[best_truth_idx]          # Shape: [num_priors,4]
     conf = labels[best_truth_idx]         # Shape: [num_priors]
     conf[best_truth_overlap < threshold] = 0  # label as background
+    
     loc = encode(matches, priors, variances)
     loc_t[idx] = loc    # [num_priors,4] encoded offsets to learn
     conf_t[idx] = conf  # [num_priors] top class label for each prior
