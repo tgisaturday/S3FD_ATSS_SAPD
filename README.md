@@ -1,5 +1,6 @@
 ## S³FD_ATSS_SAPD: Single Shot Scale-invariant Face Detector ##
 Application of Adaptive Training Sample Selection and Soft Anchor Point Detection to S3FD
+
 based on the PyTorch Implementation of Single Shot Scale-invariant Face Detector
 
 ### Description
@@ -44,19 +45,24 @@ from stage 2 of S3FD as starting candidate set. Other details follow the origina
 2. Soft Anchor Point Detection(SAPD)
 
 I applied SAPD to the smoothed_L1_loss of S3FD in multibox_loss.py (line 109-107)
+
 anchor_weight calculation for generalized centerness function is done in bbox_utils.py (line 293)
+
 I first multiply anchor_weight to the result of smoothed_L1_loss and
 devide the total sum of loss with the sum of anchor_weight in multibox_loss.py (line 112-114)
+
 I tried to preserve the main concept of original SAPD while modifying the generalized centerness function to make it fit to the regression loss of S3FD.
 
 
 ### Result
 1. test on WIDER FACE 
 
-	WIDER FACE:
 	Easy AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
+    
 	Medium AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
+    
 	Hard AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
+    
 
 
 
