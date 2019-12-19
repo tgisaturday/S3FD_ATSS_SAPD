@@ -60,26 +60,26 @@ _C.NUM_CLASSES = 2
 _C.USE_NMS = True
 
 # dataset config
-_C.HOME = '/home/data/lj/'
+_C.HOME = '/home/datamining99/Desktop/Personal_Folders/Taehoon/data/'
 
 # hand config
 _C.HAND = EasyDict()
 _C.HAND.TRAIN_FILE = './data/hand_train.txt'
 _C.HAND.VAL_FILE = './data/hand_val.txt'
-_C.HAND.DIR = '/home/data/lj/egohands/'
+_C.HAND.DIR = _C.HOME+'egohands/'
 _C.HAND.OVERLAP_THRESH = 0.35
 
 # face config
 _C.FACE = EasyDict()
 _C.FACE.TRAIN_FILE = './data/face_train.txt'
 _C.FACE.VAL_FILE = './data/face_val.txt'
-_C.FACE.FDDB_DIR = '/home/data/lj/FDDB'
-_C.FACE.WIDER_DIR = '/home/data/lj/WIDER'
-_C.FACE.AFW_DIR = '/home/data/lj/AFW'
-_C.FACE.PASCAL_DIR = '/home/data/lj/PASCAL_FACE'
+_C.FACE.FDDB_DIR = _C.HOME+'FDDB'
+_C.FACE.WIDER_DIR = _C.HOME+'WIDER'
+_C.FACE.AFW_DIR = _C.HOME+'AFW'
+_C.FACE.PASCAL_DIR = _C.HOME+'PASCAL_FACE'
 _C.FACE.OVERLAP_THRESH = [0.1, 0.35, 0.5]
 
 # head config
 _C.HEAD = EasyDict()
-_C.HEAD.DIR = '/home/datamining99/Desktop/Personal_Folders/Taehoon/data/VOCHead/'
+_C.HEAD.DIR = _C.HOME+'VOCHead/'
 _C.HEAD.OVERLAP_THRESH = [0.1, 0.35, 0.5]

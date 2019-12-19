@@ -46,7 +46,7 @@ def parse_wider_file(root, file):
     total_face = 0
     for k in face_count:
         face_ = []
-        for x in xrange(total_face, total_face + k):
+        for x in range(total_face, total_face + k):
             face_.append(face_loc[x])
         img_faces += [face_]
         total_face += k
@@ -56,7 +56,7 @@ def parse_wider_file(root, file):
 def wider_data_file():
     img_paths, bbox = parse_wider_file(WIDER_TRAIN, train_list_file)
     fw = open(cfg.FACE.TRAIN_FILE, 'w')
-    for index in xrange(len(img_paths)):
+    for index in range(len(img_paths)):
         path = img_paths[index]
         boxes = bbox[index]
         fw.write(path)
@@ -69,7 +69,7 @@ def wider_data_file():
 
     img_paths, bbox = parse_wider_file(WIDER_VAL, val_list_file)
     fw = open(cfg.FACE.VAL_FILE, 'w')
-    for index in xrange(len(img_paths)):
+    for index in range(len(img_paths)):
         path = img_paths[index]
         boxes = bbox[index]
         fw.write(path)

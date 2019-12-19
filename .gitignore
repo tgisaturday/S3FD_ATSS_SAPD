@@ -1,0 +1,11 @@
+data/__pycache__/
+__pycache__/
+layers/__pycache__/
+data/face_train.txt
+data/face_val.txt
+layers/__pycache__/
+layers/functions/__pycache__/
+layers/modules/__pycache__/
+utils/__pycache__/
+weights/
+
