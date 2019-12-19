@@ -59,7 +59,7 @@ def soft_anchor(box_a, box_b, conf):
         box_a: (tensor) Ground truth bounding boxes, Shape: [num_objects,4]
         box_b: (tensor) Prior boxes from priorbox layers, Shape: [num_priors,4]
     Return:
-        jaccard overlap: (tensor) Shape: [box_a.size(0), box_b.size(0)]
+        soft anchor weight: (tensor) Shape: [box_a.size(0), box_b.size(0)]
     """
     A = box_a.size(0)
     B = box_b.size(0)
@@ -94,7 +94,7 @@ def center_distance(box_a, box_b):
         box_a: (tensor) Ground truth bounding boxes, Shape: [num_objects,4]
         box_b: (tensor) Prior boxes from priorbox layers, Shape: [num_priors,4]
     Return:
-        jaccard overlap: (tensor) Shape: [box_a.size(0), box_b.size(0)]
+        L2 distance: (tensor) Shape: [box_a.size(0), box_b.size(0)]
     """
     A = box_a.size(0)
     B = box_b.size(0)
@@ -287,7 +287,6 @@ def encode(matched, priors, variances,confs):
     #g_wh = torch.log(g_wh) / variances[1]
     g_wh = torch.log(g_wh) / variances[1]
     
-    #apply soft anchor weight to g_cxcy and g_wh
     # return target for smooth_l1_loss
     return torch.cat([g_cxcy, g_wh], 1) , anchor_weight # [num_priors,4]
 
