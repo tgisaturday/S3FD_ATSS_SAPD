@@ -2,7 +2,7 @@
 Applying [Adaptive Training Sample Selection](https://arxiv.org/abs/1912.02424) and [Soft Anchor Point Detection](https://arxiv.org/abs/1911.12448) to S3FD 
 based on [PyTorch Implementation of Single Shot Scale-invariant Face Detector](https://github.com/yxlijun/S3FD.pytorch)
 ### Description
-To train hand and head dataset with S3FD, hand dataset is [Egohands Dataset](http://vision.soic.indiana.edu/projects/egohands/), and head dataset is [SCUT-HEAD](https://github.com/HCIILAB/SCUT-HEAD-Dataset-Release)
+To train hand and head dataset with S3FD, hand dataset is [Egohands Dataset](http://vision.soic.indiana.edu/projects/egohands/) and head dataset is [SCUT-HEAD](https://github.com/HCIILAB/SCUT-HEAD-Dataset-Release)
 
 ### Requirement
 * pytorch 1.X.X 
@@ -18,7 +18,7 @@ To train hand and head dataset with S3FD, hand dataset is [Egohands Dataset](htt
 4. ``` python prepare_hand_dataset.py ```
 
 ### Train
-I chose face dataset for training and evaluation of ATSS and SAPD applications.
+I selected face dataset for the training and evaluation of ATSS and SAPD applications.
 ``` 
 python train.py --batch_size 4 --dataset face
 ``` 
@@ -46,17 +46,17 @@ function to make it fit to the original regression loss of S3FD.
 
 ### Evalution
 
-1. test on WIDER FACE 
+1. Test on WIDER FACE 
 ```
 python wider_test.py
 ```
-2. test on FDDB
+2. Test on FDDB
 ```
 python fddb_test.py
 ```
 
 ### Result
-1. test on WIDER FACE 
+1. Test on WIDER FACE 
 ```
 Easy AP    Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
     
@@ -65,7 +65,7 @@ Medium AP  Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
 Hard AP    Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
 ```
 
-2. test on FDDB
+2. Test on FDDB
 ```
 Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
     
