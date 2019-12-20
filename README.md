@@ -1,5 +1,5 @@
 ## S³FD_ATSS_SAPD: Single Shot Scale-invariant Face Detector ##
-Application of Adaptive Training Sample Selection and Soft Anchor Point Detection to S3FD 
+Applying [Adaptive Training Sample Selection](https://arxiv.org/abs/1912.02424) and [Soft Anchor Point Detection](https://arxiv.org/abs/1911.12448) to S3FD 
 based on [PyTorch Implementation of Single Shot Scale-invariant Face Detector](https://github.com/yxlijun/S3FD.pytorch)
 ### Description
 To train hand and head dataset with S3FD, hand dataset is [Egohands Dataset](http://vision.soic.indiana.edu/projects/egohands/), and head dataset is [SCUT-HEAD](https://github.com/HCIILAB/SCUT-HEAD-Dataset-Release)
@@ -25,27 +25,22 @@ python train.py --batch_size 4 --dataset face
 
 ### Implementation Details
 1. Adaptive Training Sample Selection(ATSS)
-```
-I applied ATSS after the original sample selection part of S3FD in bbox_utils.py (line 193-223)
 
-Unlike the original ATSS algorithm starting from empty candidate set, I used result positive set 
-from stage 2 of S3FD as starting candidate set. Other details follow the original ATSS algorithm.
-```
+* I applied ATSS after the original sample selection part of S3FD in bbox_utils.py (line 193-223)
+
+* Unlike the original ATSS algorithm starting from empty candidate set, I used result positive set from stage 2 of S3FD as starting candidate set. Other details follow the original ATSS algorithm.
 2. Soft Anchor Point Detection(SAPD)
-```
-I applied SAPD to the smoothed_L1_loss of S3FD in multibox_loss.py (line 109-107)
 
-Anchor_weight calculation for generalized centerness function is done in bbox_utils.py (line 293)
+* I applied SAPD to the smoothed_L1_loss of S3FD in multibox_loss.py (line 109-107)
 
-I first multiply anchor_weight to the result of smoothed_L1_loss and devide the total sum of loss 
-with the sum of anchor_weight in multibox_loss.py (line 112-114)
+* Anchor_weight calculation for generalized centerness function is done in bbox_utils.py (line 293)
 
-I tried to preserve the main concept of original SAPD while modifying the generalized centerness 
-function to make it fit to the original regression loss of S3FD.
-```
+* I first multiply anchor_weight to the result of smoothed_L1_loss and devide the total sum of loss with the sum of anchor_weight in multibox_loss.py (line 112-114)
+
+* I tried to preserve the main concept of original SAPD while modifying the generalized centerness function to make it fit to the original regression loss of S3FD.
+
 
 ### Evalution
-According to your dataset path, modify data/config.py 
 
 1. test on WIDER FACE 
 ```
