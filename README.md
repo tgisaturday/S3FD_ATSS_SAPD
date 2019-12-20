@@ -1,5 +1,6 @@
 ## S³FD_ATSS_SAPD: Single Shot Scale-invariant Face Detector ##
-Application of Adaptive Training Sample Selection and Soft Anchor Point Detection to S3FD based on [PyTorch Implementation of Single Shot Scale-invariant Face Detector](https://github.com/yxlijun/S3FD.pytorch)
+Application of Adaptive Training Sample Selection and Soft Anchor Point Detection to S3FD 
+based on [PyTorch Implementation of Single Shot Scale-invariant Face Detector](https://github.com/yxlijun/S3FD.pytorch)
 ### Description
 To train hand and head dataset with S3FD, hand dataset is [Egohands Dataset](http://vision.soic.indiana.edu/projects/egohands/),head dataset is [SCUT-HEAD](https://github.com/HCIILAB/SCUT-HEAD-Dataset-Release)
 
