@@ -54,13 +54,22 @@ I tried to preserve the main concept of original SAPD while modifying the genera
 
 ### Result
 1. test on WIDER FACE 
+```
+Easy AP    baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+    
+Medium AP  baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+    
+Hard AP    baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+```
 
-	Easy AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
+2. test on FDDB
+```
+baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
     
-	Medium AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
+baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
     
-	Hard AP		baseline= 0.927	ATSS_only= 0.927	SAPD_only= 0.927	ATSS_SAPD= 0.927
-    
+baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+```    
 
 
 
