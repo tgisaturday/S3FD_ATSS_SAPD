@@ -14,7 +14,7 @@ To train hand and head dataset with S3FD, hand dataset is [Egohands Dataset](htt
 1. download WIDER face dataset,Egohands dataset and SCUT-HEAD
 2. modify data/config.py according to your home directory
 3. ``` python prepare_wider_data.py ```
-4 ``` python prepare_handataset.py ```
+4. ``` python prepare_hand_dataset.py ```
 
 ### Train
 I chose face dataset for training and evaluation of ATSS and SAPD applications.
