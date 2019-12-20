@@ -40,7 +40,7 @@ from stage two of S3FD as starting candidate set. Other details follow the origi
 * I first multiply anchor_weight to the result of smoothed_L1_loss and devide the total sum of loss<br> 
 with the sum of anchor_weight in [multibox_loss.py](https://github.com/tgisaturday/S3FD_ATSS_SAPD/tree/master/layers/modules/multibox_loss.py) (line 112-114)
 
-* I tried to preserve the main concept of original SAPD while modifying the generalized centerness<br>
+* I tried to preserve the main concept of the original SAPD while modifying the generalized centerness<br>
 function to make it fit to the original regression loss of S3FD.
 
 
