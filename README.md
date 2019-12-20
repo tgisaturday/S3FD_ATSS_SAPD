@@ -45,6 +45,7 @@ function to make it fit to the original regression loss of S3FD.
 
 
 ### Evalution
+I trained each model with WIDER face dataset for 100k iterations.
 
 1. Test on WIDER FACE 
 ```
@@ -58,20 +59,20 @@ python fddb_test.py
 ### Result
 1. Test on WIDER FACE 
 ```
-Easy AP    Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+Easy AP    Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
     
-Medium AP  Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+Medium AP  Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
     
-Hard AP    Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+Hard AP    Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
 ```
 
 2. Test on FDDB
 ```
-Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
     
-Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
     
-Baseline= 0.927  ATSS_only= 0.927  SAPD_only= 0.927  ATSS_SAPD= 0.927
+Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
 ```    
 
 ### References
