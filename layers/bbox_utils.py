@@ -193,7 +193,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
     #ATSS implementation starts
     k = 9
     #build an empty set for candidate positive samples 
-    candidate_idx = stage2_idx[:N] #use the set from stage 2 instead.     
+    candidate_idx = stage2_idx[:N] #use the set from stage two instead.     
     
     best_prior_dist, best_prior_idx = center_dist.max(1, keepdim=True)
     # [1,num_priors] best ground truth for each prior
@@ -204,7 +204,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
     best_prior_dist.squeeze_(1)
     best_truth_dist.index_fill_(0, best_prior_idx, 2)  # ensure best prior
     best_truth_dist_clone = best_truth_dist.clone()
-    stage3_dist, stage3_idx = best_truth_dist_clone.sort(descending=True)
+    stage3_dist, stage3_idx = best_truth_dist_clone.sort()
     
     #set of new candidates
     candidate_idx = torch.cat((candidate_idx,stage3_idx[:k]),dim=-1)
