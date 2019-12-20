@@ -26,19 +26,19 @@ python train.py --batch_size 4 --dataset face
 ### Implementation Details
 1. Adaptive Training Sample Selection(ATSS)
 
-* I applied ATSS after the original sample selection part of S3FD in bbox_utils.py (line 193-223)
+* I applied ATSS after the original sample selection part of S3FD in [bbox_utils.py](https://github.com/tgisaturday/S3FD_ATSS_SAPD/blob/master/layers/bbox_utils.py) (line 193-223)
 
 * Unlike the original ATSS algorithm starting from empty candidate set, I used result positive set<br>
-from stage 2 of S3FD as starting candidate set. Other details follow the original ATSS algorithm.
+from stage two of S3FD as starting candidate set. Other details follow the original ATSS algorithm.
 
 2. Soft Anchor Point Detection(SAPD)
 
-* I applied SAPD to the smoothed_L1_loss of S3FD in multibox_loss.py (line 109-107)
+* I applied SAPD to the smoothed_L1_loss of S3FD in [multibox_loss.py](https://github.com/tgisaturday/S3FD_ATSS_SAPD/tree/master/layers/modules) (line 109-107)
 
-* Anchor_weight calculation for generalized centerness function is done in bbox_utils.py (line 293)
+* Anchor_weight calculation for generalized centerness function is done in [bbox_utils.py](https://github.com/tgisaturday/S3FD_ATSS_SAPD/blob/master/layers/bbox_utils.py) (line 293)
 
 * I first multiply anchor_weight to the result of smoothed_L1_loss and devide the total sum of loss<br> 
-with the sum of anchor_weight in multibox_loss.py (line 112-114)
+with the sum of anchor_weight in [multibox_loss.py](https://github.com/tgisaturday/S3FD_ATSS_SAPD/tree/master/layers/modules) (line 112-114)
 
 * I tried to preserve the main concept of original SAPD while modifying the generalized centerness<br>
 function to make it fit to the original regression loss of S3FD.
