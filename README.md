@@ -47,14 +47,14 @@ function to make it fit to the original regression loss of S3FD.
 ### Evalution
 I trained each model with WIDER face dataset for 100k iterations.
 
-1. Test on WIDER FACE 
+1. Extract predictions on WIDER FACE 
 ```
 python wider_test.py
 ```
-2. Test on FDDB
-```
-python fddb_test.py
-```
+2. Evaluate predictions using [WiderFace-Evaluation](https://github.com/wondervictor/WiderFace-Evaluation). 
+
+* Prediction results will be saved in 'eval_tools/s3fd_val'. 
+* Ground truth files are stored in 'eval_tools/wider_gt/'.
 
 ### Result
 1. Test on WIDER FACE 
@@ -66,18 +66,10 @@ Medium AP  Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0
 Hard AP    Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
 ```
 
-2. Test on FDDB
-```
-Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
-    
-Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
-    
-Baseline = 0.927  ATSS_only = 0.927  SAPD_only = 0.927  ATSS_SAPD = 0.927
-```    
-
 ### References
 * [S³FD: Single Shot Scale-invariant Face Detector](https://arxiv.org/abs/1708.05237)
 * [Bridging the Gap Between Anchor-based and Anchor-free Detection via Adaptive Training Sample Selection](https://arxiv.org/abs/1912.02424)
 * [Soft Anchor-Point Object Detection](https://arxiv.org/abs/1911.12448)
 * [ssd.pytorch](https://github.com/amdegroot/ssd.pytorch)
 * [S3FD.pytorch](https://github.com/yxlijun/S3FD.pytorch)
+* [WiderFace-Evaluation](https://github.com/wondervictor/WiderFace-Evaluation). 

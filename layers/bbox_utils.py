@@ -189,7 +189,7 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t,anc_t, idx
         N = torch.sum(stage2_overlap[:N]) if torch.sum(
             stage2_overlap[:N]) < N else N
         conf[stage2_idx[:N]] += 1
-
+    
     #ATSS implementation starts
     k = 9
     #build an empty set for candidate positive samples 
