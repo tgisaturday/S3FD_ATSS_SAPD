@@ -59,11 +59,11 @@ python wider_test.py
 ### Result
 1. Test on WIDER FACE 
 ```
-Easy AP    Baseline = 0.946  ATSS_only = 0.944  SAPD_only = 0.943  ATSS_SAPD = 0.927
+Easy AP    Baseline = 0.946  ATSS_only = 0.944  SAPD_only = 0.943  ATSS_SAPD = 0.944
     
-Medium AP  Baseline = 0.932  ATSS_only = 0.931  SAPD_only = 0.930  ATSS_SAPD = 0.927
+Medium AP  Baseline = 0.932  ATSS_only = 0.931  SAPD_only = 0.930  ATSS_SAPD = 0.932
     
-Hard AP    Baseline = 0.849  ATSS_only = 0.846  SAPD_only = 0.847  ATSS_SAPD = 0.927
+Hard AP    Baseline = 0.849  ATSS_only = 0.846  SAPD_only = 0.847  ATSS_SAPD = 0.851
 ```
 
 ### References
